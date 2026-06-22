@@ -82,26 +82,26 @@ Once configured, readers can:
 
 ## GitHub Automation
 
-Two workflow files are included:
+Two workflow files drive cross-repo deployment:
 
-- site repo: `.github/workflows/deploy-site.yml`
-- content repo: `engineering-notebook-content/.github/workflows/notify-site.yml`
+- site repo: `.github/workflows/deploy-site.yml` — builds and publishes to GitHub Pages on push, on a `content-updated` dispatch, or manually.
+- content repo: `.github/workflows/notify-site.yml` — dispatches `content-updated` to the site repo when content changes.
 
-To finish the cross-repo deployment setup on GitHub:
+The repo references are already wired:
 
-1. Create two GitHub repos:
-   - `engineering-notebook-site`
-   - `engineering-notebook-content`
-2. Push each local repo to its matching GitHub repo
-3. In the content repo, add a secret named `SITE_REPO_PAT`
-   - it should be a personal access token with permission to dispatch workflows in the site repo
-4. Replace the placeholder `your-github-username/...` values in:
-   - `src/siteConfig.ts`
-   - `.env.example`
-   - `.github/workflows/deploy-site.yml`
-   - `engineering-notebook-content/.github/workflows/notify-site.yml`
-5. Enable GitHub Pages on the site repo and use GitHub Actions as the source
+- site repo: `ike1112/ai-native-engineering-site`
+- content repo: `ike1112/ai-native-engineering-content`
 
-After that, the publishing loop becomes:
+Both repos are private, so the workflows authenticate with a personal access token. To finish the setup on GitHub (one-time, manual):
 
-`edit Markdown -> push content repo -> dispatch site rebuild -> GitHub Pages publishes updated site`
+1. Create one personal access token that can read the content repo and trigger
+   workflows on the site repo. Simplest: a classic PAT with the `repo` scope.
+   A fine-grained PAT scoped to both repos with Contents: read/write also works.
+2. Add that token as a secret named `NOTEBOOK_PAT` in **both** repos
+   (Settings → Secrets and variables → Actions → New repository secret).
+3. On the **site** repo, enable GitHub Pages with **GitHub Actions** as the
+   source (Settings → Pages).
+
+After that, the publishing loop runs on its own:
+
+`edit Markdown -> flip status to published -> push content repo -> notify-site dispatches -> deploy-site builds -> GitHub Pages publishes`

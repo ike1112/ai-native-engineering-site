@@ -27,8 +27,9 @@ jobs:
       - name: Checkout content repo
         uses: actions/checkout@v4
         with:
-          repository: your-github-username/engineering-notebook-content
+          repository: ike1112/ai-native-engineering-content
           path: engineering-notebook-content
+          token: ${{ secrets.NOTEBOOK_PAT }}
 
       - name: Set up Node
         uses: actions/setup-node@v4

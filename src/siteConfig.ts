@@ -5,9 +5,9 @@ export const SITE_CONFIG = {
   packageName: 'engineering-notebook-site',
   description:
     'A public engineering notebook documenting AI-native engineering, systems thinking, production hardening, and verification work.',
-  githubRepoUrl: 'https://github.com/your-github-username/engineering-notebook-site',
+  githubRepoUrl: 'https://github.com/ike1112/ai-native-engineering-site',
   githubDiscussionsUrl:
-    'https://github.com/your-github-username/engineering-notebook-site/discussions',
+    'https://github.com/ike1112/ai-native-engineering-site/discussions',
 };
 
 export const COMMUNITY_CONFIG = {
