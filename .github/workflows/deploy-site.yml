@@ -1,0 +1,65 @@
+name: Deploy Site
+
+on:
+  push:
+    branches: ['main']
+  repository_dispatch:
+    types: [content-updated]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout site repo
+        uses: actions/checkout@v4
+
+      - name: Checkout content repo
+        uses: actions/checkout@v4
+        with:
+          repository: your-github-username/engineering-notebook-content
+          path: engineering-notebook-content
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build content and site
+        env:
+          CONTENT_REPO_PATH: engineering-notebook-content
+          SITE_BASE_PATH: /${{ github.event.repository.name }}/
+        run: |
+          node ./scripts/content/build-content.mjs
+          npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

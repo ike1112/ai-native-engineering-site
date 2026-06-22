@@ -1,0 +1,6 @@
+{
+  "name": "Isabel Ke | Public Engineering Notebook",
+  "description": "A public engineering notebook documenting AI-native engineering, production hardening, systems thinking, and verification work.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
