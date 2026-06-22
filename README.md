@@ -31,6 +31,20 @@ During local development and production builds:
 
 When Markdown files change while `npm run dev` is running, the Vite plugin regenerates content and reloads the page.
 
+## Drafts and the publish gate
+
+Each content entry's frontmatter carries a `status` field (`published` or `draft`).
+
+- `npm run dev` previews **everything**, including drafts, so you can review an
+  entry locally before it goes live. Nothing here is public.
+- `npm run build` (production, and the deploy pipeline) **excludes** any entry
+  with `status: draft`. A draft can be committed and pushed safely and still
+  stay off the live site until you flip it to `status: published`.
+
+So the loop is: write with `status: draft` → preview with `npm run dev` →
+flip to `status: published` → push. Editing is just editing the Markdown;
+"publish" is the status flip plus a push.
+
 ## Local Development
 
 **Prerequisites:** Node.js

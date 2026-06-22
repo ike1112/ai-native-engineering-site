@@ -8,13 +8,19 @@ import {resolveContentRepoPath, writeGeneratedContent} from './scripts/content/b
 function notebookContentPlugin() {
   const contentRepoPath = resolveContentRepoPath();
   let regenerateTimer: NodeJS.Timeout | undefined;
+  // Local dev (`vite serve`) previews drafts; production builds exclude them so
+  // a draft never reaches the live site until its status is flipped to published.
+  let includeDrafts = false;
 
   const regenerate = async () => {
-    await writeGeneratedContent(contentRepoPath);
+    await writeGeneratedContent(contentRepoPath, {includeDrafts});
   };
 
   return {
     name: 'notebook-content-plugin',
+    configResolved(config) {
+      includeDrafts = config.command === 'serve';
+    },
     async buildStart() {
       await regenerate();
     },

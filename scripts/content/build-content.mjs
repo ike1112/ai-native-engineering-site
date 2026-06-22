@@ -60,6 +60,7 @@ function parseEssay(filePath, source) {
   const { data, content } = matter(source);
   return {
     id: createId(data, filePath),
+    status: data.status ?? 'published',
     title: data.title,
     date: data.date,
     readTime: data.readTime ?? '',
@@ -75,6 +76,7 @@ function parseBuildLog(filePath, source) {
   const { data, content } = matter(source);
   return {
     id: createId(data, filePath),
+    status: data.status ?? 'published',
     title: data.title,
     subtitle: data.subtitle ?? '',
     category: data.category ?? 'Build Log',
@@ -101,6 +103,7 @@ function parseLearningNote(filePath, source) {
   const { data, content } = matter(source);
   return {
     id: createId(data, filePath),
+    status: data.status ?? 'published',
     title: data.title,
     author: data.author ?? '',
     source: data.source ?? '',
@@ -115,21 +118,35 @@ function parseLearningNote(filePath, source) {
   };
 }
 
-export async function loadNotebookContent(contentRepoPath) {
+// Only entries with `status: draft` are hidden, and only when drafts are
+// excluded. Anything else (published, or no status set) always renders. Drafts
+// are shown in local dev so you can preview before publishing, and excluded
+// from production builds so they never reach the live site until you flip the
+// status to `published`.
+function selectVisible(items, includeDrafts) {
+  if (includeDrafts) return items;
+  return items.filter((item) => item.status !== 'draft');
+}
+
+function stripInternalFields({ status, ...rest }) {
+  return rest;
+}
+
+export async function loadNotebookContent(contentRepoPath, { includeDrafts = false } = {}) {
   const repoRoot = resolveContentRepoPath(contentRepoPath);
 
-  const essaysDir = path.join(repoRoot, 'essays');
+  const articlesDir = path.join(repoRoot, 'articles');
   const buildLogsDir = path.join(repoRoot, 'build-logs');
   const learningNotesDir = path.join(repoRoot, 'learning-notes');
 
-  const [essayFiles, buildLogFiles, learningNoteFiles] = await Promise.all([
-    readMarkdownFiles(essaysDir),
+  const [articleFiles, buildLogFiles, learningNoteFiles] = await Promise.all([
+    readMarkdownFiles(articlesDir),
     readMarkdownFiles(buildLogsDir),
     readMarkdownFiles(learningNotesDir),
   ]);
 
   const notes = await Promise.all(
-    essayFiles.map(async (filePath) => parseEssay(filePath, await fs.readFile(filePath, 'utf8'))),
+    articleFiles.map(async (filePath) => parseEssay(filePath, await fs.readFile(filePath, 'utf8'))),
   );
   const projects = await Promise.all(
     buildLogFiles.map(async (filePath) => parseBuildLog(filePath, await fs.readFile(filePath, 'utf8'))),
@@ -139,9 +156,9 @@ export async function loadNotebookContent(contentRepoPath) {
   );
 
   return {
-    notes: sortByDateDescending(notes),
-    projects: sortByDateDescending(projects),
-    readingNotes: sortByDateDescending(readingNotes),
+    notes: sortByDateDescending(selectVisible(notes, includeDrafts)).map(stripInternalFields),
+    projects: sortByDateDescending(selectVisible(projects, includeDrafts)).map(stripInternalFields),
+    readingNotes: sortByDateDescending(selectVisible(readingNotes, includeDrafts)).map(stripInternalFields),
   };
 }
 
@@ -159,9 +176,9 @@ export const READING_NOTES_DATA = ${JSON.stringify(readingNotes, null, 2)} as co
 `;
 }
 
-export async function writeGeneratedContent(contentRepoPath) {
+export async function writeGeneratedContent(contentRepoPath, options = {}) {
   const repoRoot = resolveContentRepoPath(contentRepoPath);
-  const notebook = await loadNotebookContent(repoRoot);
+  const notebook = await loadNotebookContent(repoRoot, options);
   const moduleSource = generateContentModule(notebook, repoRoot);
 
   await fs.mkdir(path.dirname(GENERATED_CONTENT_PATH), { recursive: true });
@@ -175,8 +192,9 @@ export async function writeGeneratedContent(contentRepoPath) {
 }
 
 if (process.argv[1] === __filename) {
-  const result = await writeGeneratedContent(process.argv[2]);
+  const includeDrafts = process.env.INCLUDE_DRAFTS === 'true';
+  const result = await writeGeneratedContent(process.argv[2], { includeDrafts });
   console.log(
-    `Generated ${path.relative(siteRoot, result.outputPath)} from ${result.repoRoot} (${result.notes.length} essays, ${result.projects.length} build logs, ${result.readingNotes.length} learning notes)`,
+    `Generated ${path.relative(siteRoot, result.outputPath)} from ${result.repoRoot} (${result.notes.length} articles, ${result.projects.length} build logs, ${result.readingNotes.length} learning notes${includeDrafts ? ', drafts included' : ''})`,
   );
 }
