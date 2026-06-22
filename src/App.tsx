@@ -8,7 +8,6 @@ import { MapPin, Mail, ChevronDown } from 'lucide-react';
 
 import { NOTES_DATA } from './generated/notebook-content';
 import { RESUME_DATA } from './notebook';
-import CommunityBlock from './components/CommunityBlock';
 import { SITE_CONFIG } from './siteConfig';
 
 export default function App() {
@@ -172,11 +171,6 @@ export default function App() {
                               </span>
                             ))}
                           </div>
-                          <CommunityBlock
-                            title={note.title}
-                            term={`note:${note.id}`}
-                            prompt="What resonated here? What would you challenge, extend, or want to discuss further?"
-                          />
                         </div>
                       )}
                     </article>
