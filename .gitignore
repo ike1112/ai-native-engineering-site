@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# local design prototypes / screenshots (not part of the site)
+design-prototypes/

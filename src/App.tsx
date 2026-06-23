@@ -4,169 +4,130 @@
  */
 
 import React, { useState } from 'react';
-import { MapPin, Mail, ChevronDown } from 'lucide-react';
 
 import { NOTES_DATA } from './generated/notebook-content';
 import { RESUME_DATA } from './notebook';
 import { SITE_CONFIG } from './siteConfig';
 
+const isoDate = (value: string) => String(value).slice(0, 10);
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'articles' | 'about'>('home');
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'instant' });
+
+  const navItems = [
+    { id: 'home', label: 'home' },
+    { id: 'articles', label: 'articles' },
+    { id: 'about', label: 'about' },
+  ] as const;
 
   return (
-    <div className="min-h-screen bg-[#FCFBFA] text-zinc-900 select-text flex flex-col font-sans antialiased">
+    <div className="min-h-screen bg-bg text-ink font-mono flex flex-col selection:bg-accent">
 
-      {/* Editorial Header */}
-      <header className="border-b border-zinc-200/60 sticky top-0 bg-[#FCFBFA]/90 backdrop-blur-md z-45">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 h-20 flex justify-between items-center">
-
-          {/* Identity Sign-off */}
+      {/* Header */}
+      <header className="border-b border-line sticky top-0 bg-bg/90 backdrop-blur-md z-40">
+        <div className="max-w-[780px] mx-auto px-7 h-[68px] flex justify-between items-center">
           <button
             onClick={() => { setActiveTab('home'); scrollToTop(); }}
-            className="flex flex-col text-left group cursor-pointer focus:outline-none"
+            className="font-mono font-bold text-sm tracking-tight cursor-pointer focus:outline-none"
           >
-            <span className="font-serif text-xl font-bold tracking-tight text-zinc-900 group-hover:text-zinc-650 transition-colors">
-              Isabel Ke
-            </span>
+            isabel<span className="text-accent">.ke</span>
           </button>
-
-          {/* Minimal Navigation */}
-          <nav className="flex items-center gap-1 sm:gap-2">
-            {[
-              { id: 'home', label: 'Home' },
-              { id: 'articles', label: 'Articles' },
-              { id: 'about', label: 'About' }
-            ].map((tab) => (
+          <nav className="flex items-center gap-5">
+            {navItems.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id as any);
-                  scrollToTop();
-                }}
-                className={`px-3 py-1.5 text-xs font-mono transition-all rounded-md cursor-pointer uppercase tracking-wider ${
-                  activeTab === tab.id
-                    ? 'text-zinc-900 font-semibold bg-zinc-100 shadow-xs'
-                    : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
+                onClick={() => { setActiveTab(tab.id); scrollToTop(); }}
+                className={`text-xs cursor-pointer transition-colors ${
+                  activeTab === tab.id ? 'text-accent' : 'text-muted hover:text-ink'
                 }`}
               >
                 {tab.label}
               </button>
             ))}
           </nav>
-
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-6 sm:px-8 py-10">
+      <main className="flex-1 w-full max-w-[780px] mx-auto px-7 py-4">
 
-        {/* ====================================================================
-            TAB: HOME
-            ==================================================================== */}
+        {/* HOME */}
         {activeTab === 'home' && (
-          <div className="space-y-16 animate-fadeIn">
-            <section className="py-6 space-y-6 max-w-3xl">
-              <h1 className="font-serif text-5xl sm:text-7xl font-extrabold text-zinc-950 tracking-tight leading-none">
-                Isabel Ke
-              </h1>
+          <section className="py-16">
+            <div className="text-accent text-[13px] mb-5">
+              <span className="text-faint">~/notebook</span> $ whoami
+            </div>
+            <h1 className="font-mono font-bold text-4xl sm:text-[40px] leading-tight tracking-tight">
+              Isabel Ke
+            </h1>
+            <p className="text-accent2 text-[15px] font-medium mt-5">
+              Engineer. Systems Thinker. AI-Native Builder.
+            </p>
+            <p className="font-serif text-lg text-muted mt-5 max-w-[36em] leading-relaxed">
+              Exploring how software engineering changes when implementation is delegated to AI.
+              {' '}{RESUME_DATA.summary}
+            </p>
 
-              <div className="text-zinc-800 font-serif text-xl sm:text-3xl font-light leading-snug space-y-3">
-                <p className="italic">Engineer. Systems Thinker. AI-Native Builder.</p>
-                <p className="max-w-3xl">
-                  Exploring how software engineering changes when implementation is delegated to AI.
-                </p>
-              </div>
-
-              <div className="h-px bg-zinc-200/80 w-24 my-6" />
-
-              <p className="font-serif text-base text-zinc-700 leading-relaxed max-w-2xl font-light">
-                {RESUME_DATA.summary}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-xs font-mono text-zinc-400">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" /> {RESUME_DATA.location}
-                </span>
-                <span>•</span>
-                <a href={`mailto:${RESUME_DATA.email}`} className="text-zinc-900 hover:underline transition-all font-semibold">
-                  {RESUME_DATA.email}
-                </a>
-              </div>
-            </section>
-          </div>
+            <div className="mt-8 text-[13px] text-faint grid grid-cols-[max-content_1fr] gap-y-1 gap-x-5">
+              <span className="text-muted">location</span><span>{RESUME_DATA.location}</span>
+              <span className="text-muted">contact</span>
+              <a href={`mailto:${RESUME_DATA.email}`} className="text-accent hover:underline">{RESUME_DATA.email}</a>
+              <span className="text-muted">focus</span><span>verification · hardening · system understanding</span>
+            </div>
+          </section>
         )}
 
-        {/* ====================================================================
-            TAB: ARTICLES
-            ==================================================================== */}
+        {/* ARTICLES */}
         {activeTab === 'articles' && (
-          <div className="space-y-10 animate-fadeIn">
-
-            <div className="space-y-2 max-w-2xl">
-              <span className="font-mono text-[10px] font-semibold text-zinc-400 uppercase tracking-widest block">
-                Writing
-              </span>
-              <h2 className="font-serif text-3xl font-bold tracking-tight text-zinc-950">
-                Articles &amp; Walkthroughs
-              </h2>
-              <p className="text-sm text-zinc-500 leading-relaxed font-sans">
+          <section className="py-12 space-y-8">
+            <div>
+              <div className="text-xs text-faint mb-2"><span className="text-accent">// </span>articles</div>
+              <h2 className="font-mono font-bold text-2xl tracking-tight">Articles &amp; Walkthroughs</h2>
+              <p className="font-serif text-muted mt-2 max-w-[40em] leading-relaxed">
                 Notes on AI-native engineering, systems thinking, verification, and production hardening.
               </p>
             </div>
 
             {NOTES_DATA.length > 0 ? (
-              <div className="space-y-6 max-w-3xl">
+              <div className="space-y-4">
                 {NOTES_DATA.map((note) => {
                   const isExpanded = expandedNoteId === note.id;
                   return (
-                    <article
-                      key={note.id}
-                      className="border border-zinc-200 bg-white rounded-xl shadow-xs hover:border-zinc-300 transition-all overflow-hidden"
-                    >
-                      {/* Header trigger */}
+                    <article key={note.id} className="border border-line bg-panel rounded-lg overflow-hidden">
                       <button
                         onClick={() => setExpandedNoteId(isExpanded ? null : note.id)}
-                        className="w-full text-left p-6 sm:p-8 flex justify-between items-start gap-4 cursor-pointer focus:outline-none"
+                        className="w-full text-left p-6 flex justify-between items-start gap-4 cursor-pointer focus:outline-none"
                       >
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center gap-3 text-[10px] font-mono text-zinc-400">
-                            <span className="uppercase font-semibold tracking-wider text-zinc-500">{note.category}</span>
-                            <span>•</span>
-                            <span>{note.date}</span>
-                            <span>•</span>
+                        <div className="space-y-2.5">
+                          <div className="flex flex-wrap gap-3 text-[11px] uppercase tracking-wider text-faint">
+                            <span className="text-accent">{note.category}</span>
+                            <span>{isoDate(note.date)}</span>
                             <span>{note.readTime}</span>
                           </div>
-                          <h3 className="font-serif text-xl sm:text-2xl font-bold text-zinc-950 hover:text-zinc-650 transition-colors">
+                          <h3 className="font-serif font-medium text-xl sm:text-[26px] leading-snug text-ink">
                             {note.title}
                           </h3>
                           {!isExpanded && (
-                            <p className="text-sm text-zinc-650 leading-relaxed font-light font-sans max-w-2xl">
+                            <p className="font-serif text-muted leading-relaxed max-w-[40em]">
                               {note.summary}
                             </p>
                           )}
                         </div>
-                        <div className="text-zinc-400 hover:text-zinc-950 transition-all hover:bg-zinc-100 p-1.5 rounded-full shrink-0">
-                          <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
-                        </div>
+                        <span className="text-accent text-sm shrink-0 mt-1">{isExpanded ? '[ - ]' : '[ + ]'}</span>
                       </button>
 
-                      {/* Content view */}
                       {isExpanded && (
-                        <div className="px-6 pb-8 sm:px-8 sm:pb-10 border-t border-zinc-100 pt-6 space-y-6 bg-zinc-50/15">
+                        <div className="px-6 pb-8 border-t border-line pt-6">
                           <div
-                            className="font-serif text-zinc-800 text-sm sm:text-base leading-relaxed space-y-4 font-light pr-4 max-w-2xl prose prose-zinc max-w-none"
+                            className="article-body max-w-[42em]"
                             dangerouslySetInnerHTML={{ __html: note.contentHtml ?? note.content }}
                           />
-
-                          <div className="flex items-center gap-2 pt-4 border-t border-zinc-150 flex-wrap">
-                            <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest font-bold mr-1">Tags:</span>
-                            {note.tags.map(tag => (
-                              <span key={tag} className="text-[9px] font-mono bg-zinc-100 text-zinc-650 px-2.5 py-0.5 rounded">
+                          <div className="flex items-center gap-2 pt-6 mt-6 border-t border-line flex-wrap">
+                            <span className="text-[10px] uppercase tracking-widest text-faint mr-1">tags:</span>
+                            {note.tags.map((tag) => (
+                              <span key={tag} className="text-[11px] text-muted border border-line rounded px-2 py-0.5">
                                 #{tag}
                               </span>
                             ))}
@@ -178,58 +139,40 @@ export default function App() {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-zinc-500 font-sans">No articles published yet.</p>
+              <p className="text-sm text-muted">No articles published yet.</p>
             )}
-
-          </div>
+          </section>
         )}
 
-        {/* ====================================================================
-            TAB: ABOUT
-            ==================================================================== */}
+        {/* ABOUT */}
         {activeTab === 'about' && (
-          <div className="space-y-8 animate-fadeIn font-sans max-w-3xl">
-
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-250 pb-6">
-              <div className="space-y-1">
-                <span className="font-mono text-[10px] font-semibold text-zinc-400 uppercase tracking-widest block">
-                  About
-                </span>
-                <h2 className="font-serif text-3xl font-extrabold tracking-tight text-zinc-950">
-                  {RESUME_DATA.name}
-                </h2>
-                <p className="text-zinc-500 font-mono text-xs">
-                  {RESUME_DATA.title} — {RESUME_DATA.location}
-                </p>
-              </div>
-              <a
-                href={`mailto:${RESUME_DATA.email}`}
-                className="inline-flex items-center gap-2 bg-zinc-950 hover:bg-zinc-850 text-white text-xs font-mono font-semibold px-4 py-2.5 rounded-md transition-all cursor-pointer shadow-xs"
-              >
-                <Mail className="w-3.5 h-3.5" /> Email Isabel
-              </a>
+          <section className="py-12 space-y-7 max-w-[42em]">
+            <div className="border-b border-line pb-6">
+              <div className="text-xs text-faint mb-2"><span className="text-accent">// </span>about</div>
+              <h2 className="font-mono font-bold text-2xl tracking-tight">{RESUME_DATA.name}</h2>
+              <p className="text-faint text-[13px] mt-2">{RESUME_DATA.title} — {RESUME_DATA.location}</p>
             </div>
 
-            <p className="text-sm sm:text-base font-serif text-zinc-750 leading-relaxed font-light">
+            <p className="font-serif text-lg text-muted leading-relaxed">
               {RESUME_DATA.summary}
             </p>
 
-          </div>
+            <a
+              href={`mailto:${RESUME_DATA.email}`}
+              className="inline-block text-[13px] text-accent border border-line rounded px-4 py-2 hover:border-accent transition-colors"
+            >
+              email isabel →
+            </a>
+          </section>
         )}
 
       </main>
 
-      {/* Editorial Footer */}
-      <footer className="border-t border-zinc-200 py-12 px-6 sm:px-8 mt-20 bg-[#FAF9F6]">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
-          <div className="text-left space-y-1">
-            <span className="font-serif text-sm font-bold text-zinc-950 block">{SITE_CONFIG.siteName}</span>
-          </div>
-          <div className="flex items-center gap-4 text-xs font-mono text-zinc-450">
-            <span>{RESUME_DATA.email}</span>
-            <span>•</span>
-            <span className="font-semibold text-zinc-900">Truth &amp; Verification</span>
-          </div>
+      {/* Footer */}
+      <footer className="border-t border-line mt-16 py-9">
+        <div className="max-w-[780px] mx-auto px-7 flex justify-between items-center text-xs text-faint">
+          <span>{SITE_CONFIG.siteName}</span>
+          <span className="text-muted">truth &amp; verification</span>
         </div>
       </footer>
 
