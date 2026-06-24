@@ -56,8 +56,8 @@ export default function App() {
         {/* HOME */}
         {activeTab === 'home' && (
           <section className="py-16">
-            <div className="text-accent text-[13px] mb-5">
-              <span className="text-faint">~/notebook</span> $ whoami
+            <div className="text-faint text-[11px] uppercase tracking-[0.22em] mb-5">
+              Public Engineering Notebook
             </div>
             <h1 className="font-mono font-bold text-4xl sm:text-[40px] leading-tight tracking-tight">
               Isabel Ke
@@ -83,7 +83,6 @@ export default function App() {
         {activeTab === 'articles' && (
           <section className="py-12 space-y-8">
             <div>
-              <div className="text-xs text-faint mb-2"><span className="text-accent">// </span>articles</div>
               <h2 className="font-mono font-bold text-2xl tracking-tight">Articles &amp; Walkthroughs</h2>
               <p className="font-serif text-muted mt-2 max-w-[40em] leading-relaxed">
                 Notes on AI-native engineering, systems thinking, verification, and production hardening.
@@ -148,7 +147,6 @@ export default function App() {
         {activeTab === 'about' && (
           <section className="py-12 space-y-7 max-w-[42em]">
             <div className="border-b border-line pb-6">
-              <div className="text-xs text-faint mb-2"><span className="text-accent">// </span>about</div>
               <h2 className="font-mono font-bold text-2xl tracking-tight">{RESUME_DATA.name}</h2>
               <p className="text-faint text-[13px] mt-2">{RESUME_DATA.title} — {RESUME_DATA.location}</p>
             </div>
