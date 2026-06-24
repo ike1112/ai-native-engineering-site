@@ -39,6 +39,22 @@ function ensureArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+const WORDS_PER_MINUTE = 220;
+
+// Estimate reading time from the body's word count. Strips code, images, link
+// URLs, and HTML so only readable prose is counted. Always derived, never typed.
+function computeReadTime(markdown) {
+  const text = String(markdown)
+    .replace(/```[\s\S]*?```/g, ' ') // fenced code blocks
+    .replace(/`[^`]*`/g, ' ') // inline code
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // links -> keep text, drop url
+    .replace(/<[^>]+>/g, ' '); // raw HTML tags
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+  return `${minutes} min read`;
+}
+
 function createId(frontmatter, filePath) {
   return frontmatter.slug || path.basename(filePath, path.extname(filePath));
 }
@@ -64,7 +80,7 @@ function parseEssay(filePath, source) {
     status: data.status ?? 'published',
     title: data.title,
     date: data.date,
-    readTime: data.readTime ?? '',
+    readTime: computeReadTime(content),
     category: data.category ?? 'Essay',
     summary: data.summary ?? '',
     content,
