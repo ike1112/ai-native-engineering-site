@@ -51,7 +51,7 @@ export interface ReadingNote {
 export const RESUME_DATA = {
   name: 'Isabel Ke',
   title: 'Engineer & Systems Thinker',
-  location: 'San Francisco, CA',
+  location: 'Calgary, CA',
   email: 'isabelkeyan@gmail.com',
   summary:
     'I study AI-native systems, production-harden real projects, and document what I learn about verification, reliability, and system understanding.',
