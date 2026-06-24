@@ -10,6 +10,7 @@ const siteRoot = path.resolve(__dirname, '..', '..');
 
 export const DEFAULT_CONTENT_REPO_PATH = path.resolve(siteRoot, '..', 'engineering-notebook-content');
 export const GENERATED_CONTENT_PATH = path.resolve(siteRoot, 'src', 'generated', 'notebook-content.ts');
+export const PUBLIC_MEDIA_PATH = path.resolve(siteRoot, 'public', 'media');
 
 marked.setOptions({
   gfm: true,
@@ -176,6 +177,24 @@ export const READING_NOTES_DATA = ${JSON.stringify(readingNotes, null, 2)} as co
 `;
 }
 
+// Copy the content repo's media/ into the site's public/media so images
+// referenced from Markdown are served by the site. Articles reference them with
+// a relative path (e.g. ![alt](media/foo.png)); because the app never changes
+// the URL path, that resolves against the site base in both dev and production.
+export async function copyMedia(contentRepoPath) {
+  const repoRoot = resolveContentRepoPath(contentRepoPath);
+  const mediaDir = path.join(repoRoot, 'media');
+  try {
+    await fs.rm(PUBLIC_MEDIA_PATH, { recursive: true, force: true });
+    await fs.cp(mediaDir, PUBLIC_MEDIA_PATH, { recursive: true });
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+      return; // no media/ directory yet
+    }
+    throw error;
+  }
+}
+
 export async function writeGeneratedContent(contentRepoPath, options = {}) {
   const repoRoot = resolveContentRepoPath(contentRepoPath);
   const notebook = await loadNotebookContent(repoRoot, options);
@@ -183,6 +202,7 @@ export async function writeGeneratedContent(contentRepoPath, options = {}) {
 
   await fs.mkdir(path.dirname(GENERATED_CONTENT_PATH), { recursive: true });
   await fs.writeFile(GENERATED_CONTENT_PATH, moduleSource, 'utf8');
+  await copyMedia(repoRoot);
 
   return {
     repoRoot,

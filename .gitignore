@@ -9,3 +9,6 @@ coverage/
 
 # local design prototypes / screenshots (not part of the site)
 design-prototypes/
+
+# images copied from the content repo's media/ at build time
+public/media/
