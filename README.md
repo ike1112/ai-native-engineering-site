@@ -63,6 +63,20 @@ Useful commands:
 - `npm run content:build`: regenerate notebook content manually
 - `npm run build`: generate content and build the static site
 
+## Content Review Workflow
+
+Run a draft review scaffold before publishing a Markdown entry:
+
+`npm run review:draft -- <path-to-draft.md>`
+
+This writes a review artifact beside the draft as `<draft-name>.review.json`. The scaffold starts with placeholder notes, zeroed rubric scores, and a `revise` verdict so a human reviewer can fill in the real editorial judgment.
+
+Run the publish gate after the review artifact has been completed:
+
+`npm run publish:gate -- <path-to-draft.md>`
+
+The gate is meant to block vague, generic, or off-positioning drafts before publish. A draft only clears when the review artifact is present, all required scores are valid, the critical dimensions meet threshold, the average score meets threshold, and the verdict is `publish`.
+
 ## Reader Discussions
 
 This site is wired for GitHub Discussions via Giscus.

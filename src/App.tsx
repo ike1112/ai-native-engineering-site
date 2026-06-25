@@ -39,7 +39,7 @@ export default function App() {
             onClick={() => { setActiveTab('home'); scrollToTop(); }}
             className="font-serif font-semibold text-xl tracking-tight cursor-pointer focus:outline-none"
           >
-            Isabel Ke
+            {RESUME_DATA.name}
           </button>
           <nav className="flex items-center gap-6">
             {navItems.map((tab) => (
@@ -66,14 +66,19 @@ export default function App() {
               Public Engineering Notebook
             </div>
             <h1 className="font-serif font-semibold text-5xl sm:text-6xl leading-[1.05] tracking-tight text-ink">
-              Isabel Ke
+              {RESUME_DATA.name}
             </h1>
-            <p className="font-serif italic text-2xl text-ink/90 mt-6 max-w-[18em]">
-              Engineer. Systems Thinker. AI-Native Builder.
-            </p>
+            <div className="mt-6 max-w-[34em] space-y-4">
+              <p className="font-serif italic text-2xl text-ink/90">
+                Engineer. Systems thinker. Writing from real project work.
+              </p>
+              <p className="font-serif text-lg text-muted leading-relaxed">
+                I write about how building with AI changes engineering work in practice.
+              </p>
+            </div>
             <p className="font-serif text-lg text-muted mt-5 leading-relaxed max-w-[34em]">
-              I study AI-native systems, production-harden real projects, and document what I learn
-              about verification, reliability, and system understanding.
+              This notebook documents real projects, verification work, reliability lessons,
+              system understanding, and the engineering judgment behind what I build.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3 text-sm text-faint">
               <span>{RESUME_DATA.location}</span>
@@ -152,7 +157,7 @@ export default function App() {
               href={`mailto:${RESUME_DATA.email}`}
               className="inline-block mt-7 text-sm font-medium text-accent border border-line rounded-md px-4 py-2 hover:border-accent transition-colors"
             >
-              Email Isabel →
+              Email {RESUME_DATA.name.split(' ')[0]} →
             </a>
           </section>
         )}

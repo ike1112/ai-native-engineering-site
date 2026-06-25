@@ -4,7 +4,7 @@ export const SITE_CONFIG = {
   shortLabel: 'Public Engineering Notebook',
   packageName: 'engineering-notebook-site',
   description:
-    'A public engineering notebook documenting AI-native engineering, systems thinking, production hardening, and verification work.',
+    'A public engineering notebook about building with AI in practice, drawn from real projects, verification work, reliability lessons, and system understanding.',
   githubRepoUrl: 'https://github.com/ike1112/ai-native-engineering-site',
   githubDiscussionsUrl:
     'https://github.com/ike1112/ai-native-engineering-site/discussions',
