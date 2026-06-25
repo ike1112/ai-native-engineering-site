@@ -1,59 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Lora", ui-serif, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-bg: #0d0f12;
-  --color-panel: #14171c;
-  --color-ink: #e9e7e2;
-  --color-muted: #8b9099;
-  --color-faint: #5c626b;
-  --color-line: #23272e;
-  --color-accent: #7ee0a8;
-  --color-accent2: #e0b87e;
+  --color-bg: #fbfaf7;
+  --color-panel: #f3f1ea;
+  --color-ink: #1b1a17;
+  --color-prose: #2c2a26;
+  --color-muted: #6b675f;
+  --color-faint: #9b968c;
+  --color-line: #e7e3da;
+  --color-accent: #3f6b52;
 }
 
-/* Engineering-log theme: monospace UI, serif prose, dark canvas */
+/* Warm-paper editorial theme: sans UI, serif prose, light canvas */
 @layer base {
-  html, body {
-    background: var(--color-bg);
-  }
+  html, body { background: var(--color-bg); }
   body {
-    @apply antialiased font-mono;
+    @apply antialiased font-sans;
     color: var(--color-ink);
   }
-  ::selection {
-    background: #7ee0a8;
-    color: #0d0f12;
-  }
+  ::selection { background: #cfe0d5; color: #1b1a17; }
 }
 
-/* Rendered markdown body (no typography plugin — styled by hand for dark + serif) */
+/* Rendered markdown body (no typography plugin — styled by hand) */
 .article-body {
-  color: #c9c6c0;
+  color: var(--color-prose);
   font-family: var(--font-serif);
-  font-size: 1rem;
-  line-height: 1.72;
+  font-size: 1.1875rem; /* 19px */
+  line-height: 1.8;
 }
-.article-body > * + * { margin-top: 1rem; }
+.article-body > * + * { margin-top: 1.35em; }
 .article-body h3 {
   font-family: var(--font-serif);
   color: var(--color-ink);
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   font-weight: 600;
-  margin-top: 1.7rem;
+  margin-top: 1.9em;
   line-height: 1.25;
 }
 .article-body h4 {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-ink);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin-top: 1.5rem;
+  margin-top: 1.7em;
 }
 .article-body a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
 .article-body strong { color: var(--color-ink); font-weight: 600; }
@@ -61,14 +57,14 @@
 .article-body ul, .article-body ol { padding-left: 1.3rem; }
 .article-body ul { list-style: disc; }
 .article-body ol { list-style: decimal; }
-.article-body li { margin-top: 0.35rem; }
+.article-body li { margin-top: 0.4rem; }
 .article-body li::marker { color: var(--color-faint); }
 .article-body blockquote {
-  border-left: 2px solid var(--color-accent);
-  padding-left: 1rem;
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1.2rem;
   color: var(--color-ink);
   font-style: italic;
-  font-size: 1.18rem;
+  font-size: 1.3rem;
   line-height: 1.5;
 }
 .article-body code {
@@ -78,7 +74,7 @@
   border: 1px solid var(--color-line);
   border-radius: 4px;
   padding: 0.1em 0.35em;
-  color: var(--color-accent2);
+  color: #7a4b2e;
 }
 .article-body pre {
   background: var(--color-panel);
@@ -86,21 +82,28 @@
   border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;
-  font-size: 0.8rem;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  line-height: 1.55;
 }
-.article-body pre code { background: none; border: none; padding: 0; color: #c9c6c0; }
+.article-body pre code { background: none; border: none; padding: 0; color: var(--color-prose); }
+
+/* Images break out wider than the reading column and center on the page, so
+   dense diagrams stay legible. Requires no overflow-hidden ancestor. */
 .article-body img {
-  max-width: 100%;
-  height: auto;
   display: block;
-  margin: 1.5rem 0;
+  width: min(920px, 94vw);
+  max-width: none;
+  height: auto;
+  max-height: 86vh;
+  margin: 2.4em 0;
+  margin-left: 50%;
+  transform: translateX(-50%);
   border: 1px solid var(--color-line);
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #2a2f37; border-radius: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3a414b; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #d8d2c6; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #c4bdae; }
