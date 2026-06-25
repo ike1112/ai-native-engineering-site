@@ -7,7 +7,7 @@
     "content:build": "node ./scripts/content/build-content.mjs",
     "review:draft": "node ./scripts/review/review-draft.mjs",
     "publish:gate": "node ./scripts/review/publish-gate.mjs",
-    "test": "node --test tests/content-build.test.mjs tests/review-workflow.test.mjs tests/review-draft.test.mjs tests/publish-gate.test.mjs",
+    "test": "tsx --test tests/content-build.test.mjs tests/review-workflow.test.mjs tests/review-draft.test.mjs tests/publish-gate.test.mjs tests/routing.test.ts",
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",

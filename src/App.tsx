@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 
 import CommunityBlock from './components/CommunityBlock';
 import { NOTES_DATA } from './generated/notebook-content';
 import { RESUME_DATA } from './notebook';
+import { AppRoute, browserPathForRoute, redirectAppPathFromSearch, routeForAppPath, routeForBrowserPath } from './routing';
 import { SITE_CONFIG } from './siteConfig';
 
 const isoDate = (value: string) => String(value).slice(0, 10);
@@ -19,7 +20,20 @@ const fmtDate = (value: string) => {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'articles' | 'about'>('home');
+  const basePath = import.meta.env.BASE_URL;
+  const readRouteFromLocation = () => {
+    const redirectedAppPath = redirectAppPathFromSearch(window.location.search);
+
+    if (redirectedAppPath) {
+      const redirectedRoute = routeForAppPath(redirectedAppPath);
+      window.history.replaceState(null, '', browserPathForRoute(redirectedRoute, basePath));
+      return redirectedRoute;
+    }
+
+    return routeForBrowserPath(window.location.pathname, basePath);
+  };
+
+  const [activeTab, setActiveTab] = useState<AppRoute>(() => readRouteFromLocation());
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'instant' });
@@ -30,29 +44,58 @@ export default function App() {
     { id: 'about', label: 'About' },
   ] as const;
 
+  useEffect(() => {
+    const syncRouteFromLocation = () => {
+      setActiveTab(readRouteFromLocation());
+      scrollToTop();
+    };
+
+    window.addEventListener('popstate', syncRouteFromLocation);
+    return () => window.removeEventListener('popstate', syncRouteFromLocation);
+  }, []);
+
+  const navigateTo = (route: AppRoute) => {
+    const nextPath = browserPathForRoute(route, basePath);
+
+    if (`${window.location.pathname}${window.location.search}` !== nextPath) {
+      window.history.pushState(null, '', nextPath);
+    }
+
+    setExpandedNoteId(null);
+    setActiveTab(route);
+    scrollToTop();
+  };
+
+  const onNavClick = (event: MouseEvent<HTMLAnchorElement>, route: AppRoute) => {
+    event.preventDefault();
+    navigateTo(route);
+  };
+
   return (
     <div className="min-h-screen bg-bg text-ink font-sans flex flex-col">
 
       {/* Header */}
       <header className="border-b border-line sticky top-0 bg-bg/90 backdrop-blur-md z-40">
         <div className="max-w-[1100px] mx-auto px-6 sm:px-10 h-[72px] flex justify-between items-center">
-          <button
-            onClick={() => { setActiveTab('home'); scrollToTop(); }}
+          <a
+            href={browserPathForRoute('home', basePath)}
+            onClick={(event) => onNavClick(event, 'home')}
             className="font-serif font-semibold text-xl tracking-tight cursor-pointer focus:outline-none"
           >
             {RESUME_DATA.name}
-          </button>
+          </a>
           <nav className="flex items-center gap-6">
             {navItems.map((tab) => (
-              <button
+              <a
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id); scrollToTop(); }}
+                href={browserPathForRoute(tab.id, basePath)}
+                onClick={(event) => onNavClick(event, tab.id)}
                 className={`text-[13px] font-medium cursor-pointer transition-colors ${
                   activeTab === tab.id ? 'text-ink' : 'text-muted hover:text-ink'
                 }`}
               >
                 {tab.label}
-              </button>
+              </a>
             ))}
           </nav>
         </div>

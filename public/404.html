@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <script>
+      const segments = window.location.pathname.split('/').filter(Boolean);
+      const repoSegment = segments[0] ?? '';
+      const basePath = repoSegment ? `/${repoSegment}/` : '/';
+      const appPath = `/${segments.slice(1).join('/')}` || '/';
+      const redirectTarget = `${appPath}${window.location.search}${window.location.hash}`;
+      const destination = `${basePath}?redirect=${encodeURIComponent(redirectTarget)}`;
+
+      window.location.replace(destination);
+    </script>
+  </body>
+  </html>
