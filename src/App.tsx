@@ -133,10 +133,7 @@ export default function App() {
                             </span>
                           ))}
                         </div>
-                        <CommunityBlock
-                          title={note.title}
-                          term={note.id}
-                        />
+                        <CommunityBlock term={note.id} />
                       </>
                     )}
                   </article>
