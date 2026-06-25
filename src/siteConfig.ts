@@ -11,10 +11,14 @@ export const SITE_CONFIG = {
 };
 
 export const COMMUNITY_CONFIG = {
-  giscusRepo: import.meta.env.VITE_GISCUS_REPO,
-  giscusRepoId: import.meta.env.VITE_GISCUS_REPO_ID,
-  giscusCategory: import.meta.env.VITE_GISCUS_CATEGORY,
-  giscusCategoryId: import.meta.env.VITE_GISCUS_CATEGORY_ID,
+  giscusRepo:
+    import.meta.env.VITE_GISCUS_REPO ?? 'ike1112/ai-native-engineering-site',
+  giscusRepoId:
+    import.meta.env.VITE_GISCUS_REPO_ID ?? 'R_kgDOTBRtyA',
+  giscusCategory:
+    import.meta.env.VITE_GISCUS_CATEGORY ?? 'Announcements',
+  giscusCategoryId:
+    import.meta.env.VITE_GISCUS_CATEGORY_ID ?? 'DIC_kwDOTBRtyM4C_4R5',
   giscusMapping: import.meta.env.VITE_GISCUS_MAPPING ?? 'specific',
   giscusStrict: import.meta.env.VITE_GISCUS_STRICT ?? '0',
   giscusReactionsEnabled: import.meta.env.VITE_GISCUS_REACTIONS_ENABLED ?? '1',

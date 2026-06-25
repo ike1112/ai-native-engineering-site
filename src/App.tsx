@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 
+import CommunityBlock from './components/CommunityBlock';
 import { NOTES_DATA } from './generated/notebook-content';
 import { RESUME_DATA } from './notebook';
 import { SITE_CONFIG } from './siteConfig';
@@ -132,6 +133,10 @@ export default function App() {
                             </span>
                           ))}
                         </div>
+                        <CommunityBlock
+                          title={note.title}
+                          term={note.id}
+                        />
                       </>
                     )}
                   </article>

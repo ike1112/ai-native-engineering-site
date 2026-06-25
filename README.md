@@ -84,14 +84,15 @@ This site is wired for GitHub Discussions via Giscus.
 To enable it:
 
 1. Enable GitHub Discussions on your GitHub repo
-2. Create a discussion category for notebook feedback
-3. Get the repo and category IDs from Giscus
-4. Add them to `.env.local`
+2. Install the Giscus GitHub app on that repo
+3. Create or choose a discussion category for notebook feedback
+4. If you are using this repo as-is, the checked-in defaults already point at the live `Announcements` category
+5. Only add Giscus values to `.env.local` if you need to override the repo or category
 
 Once configured, readers can:
 
 - react to individual notes
-- comment inline
+- comment directly under each note
 - ask broader follow-up questions in Discussions
 
 ## GitHub Automation
