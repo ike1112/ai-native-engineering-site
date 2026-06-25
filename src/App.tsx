@@ -11,6 +11,12 @@ import { SITE_CONFIG } from './siteConfig';
 
 const isoDate = (value: string) => String(value).slice(0, 10);
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtDate = (value: string) => {
+  const [y, m, d] = isoDate(value).split('-');
+  return `${MONTHS[Number(m) - 1]} ${Number(d)}, ${y}`;
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'articles' | 'about'>('home');
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
@@ -82,60 +88,50 @@ export default function App() {
         {/* ARTICLES */}
         {activeTab === 'articles' && (
           <section className="py-16">
-            <div className="mb-4">
-              <h2 className="font-serif font-semibold text-3xl tracking-tight text-ink">
-                Articles &amp; Walkthroughs
-              </h2>
-              <p className="text-muted mt-2 leading-relaxed">
-                Notes on AI-native engineering, systems thinking, verification, and production hardening.
-              </p>
-            </div>
-
             {NOTES_DATA.length > 0 ? (
-              <div>
-                {NOTES_DATA.map((note) => {
-                  const isExpanded = expandedNoteId === note.id;
-                  return (
-                    <article key={note.id} className="border-t border-line py-8">
-                      <button
-                        onClick={() => setExpandedNoteId(isExpanded ? null : note.id)}
-                        className="w-full text-left cursor-pointer focus:outline-none group"
-                      >
-                        <div className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-wider text-faint">
-                          <span className="text-accent">{note.category}</span>
-                          <span>{isoDate(note.date)}</span>
-                          <span>{note.readTime}</span>
-                        </div>
-                        <h3 className="font-serif font-semibold text-2xl sm:text-[28px] leading-snug text-ink mt-2 group-hover:text-accent transition-colors">
-                          {note.title}
-                        </h3>
-                        {!isExpanded && (
-                          <p className="font-serif text-[17px] text-muted leading-relaxed mt-2">
-                            {note.summary}
-                          </p>
-                        )}
-                      </button>
-
-                      {isExpanded && (
-                        <>
-                          <div
-                            className="article-body mt-7"
-                            dangerouslySetInnerHTML={{ __html: note.contentHtml ?? note.content }}
-                          />
-                          <div className="flex items-center gap-2 mt-10 pt-5 border-t border-line flex-wrap">
-                            <span className="text-[10px] font-medium uppercase tracking-widest text-faint mr-1">Tags</span>
-                            {note.tags.map((tag) => (
-                              <span key={tag} className="text-[12px] text-muted bg-panel border border-line rounded px-2.5 py-0.5">
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                        </>
+              NOTES_DATA.map((note, idx) => {
+                const isExpanded = expandedNoteId === note.id;
+                return (
+                  <article key={note.id} className={idx > 0 ? 'border-t border-line pt-14 mt-14' : ''}>
+                    <button
+                      onClick={() => setExpandedNoteId(isExpanded ? null : note.id)}
+                      className="w-full text-left cursor-pointer focus:outline-none group"
+                    >
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                        {note.category}
+                      </div>
+                      <h1 className="font-serif font-semibold text-[32px] sm:text-[44px] leading-[1.12] tracking-tight text-ink mt-3 group-hover:text-accent transition-colors">
+                        {note.title}
+                      </h1>
+                      <div className="text-[12px] uppercase tracking-wider text-faint mt-3">
+                        {fmtDate(note.date)} · {note.readTime}
+                      </div>
+                      {!isExpanded && (
+                        <p className="font-serif text-lg text-muted leading-relaxed mt-5">
+                          {note.summary}
+                        </p>
                       )}
-                    </article>
-                  );
-                })}
-              </div>
+                    </button>
+
+                    {isExpanded && (
+                      <>
+                        <div
+                          className="article-body mt-8 pt-8 border-t border-line"
+                          dangerouslySetInnerHTML={{ __html: note.contentHtml ?? note.content }}
+                        />
+                        <div className="flex items-center gap-2 mt-10 pt-5 border-t border-line flex-wrap">
+                          <span className="text-[10px] font-medium uppercase tracking-widest text-faint mr-1">Tags</span>
+                          {note.tags.map((tag) => (
+                            <span key={tag} className="text-[12px] text-muted bg-panel border border-line rounded px-2.5 py-0.5">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </article>
+                );
+              })
             ) : (
               <p className="text-muted">No articles published yet.</p>
             )}

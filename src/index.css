@@ -87,17 +87,13 @@
 }
 .article-body pre code { background: none; border: none; padding: 0; color: var(--color-prose); }
 
-/* Images break out wider than the reading column and center on the page, so
-   dense diagrams stay legible. Requires no overflow-hidden ancestor. */
+/* Images stay contained within the reading column, centered. */
 .article-body img {
   display: block;
-  width: min(920px, 94vw);
-  max-width: none;
+  max-width: 100%;
   height: auto;
-  max-height: 86vh;
-  margin: 2.4em 0;
-  margin-left: 50%;
-  transform: translateX(-50%);
+  max-height: 80vh;
+  margin: 2.2em auto;
   border: 1px solid var(--color-line);
   border-radius: 10px;
 }
